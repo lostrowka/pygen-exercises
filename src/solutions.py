@@ -40,3 +40,55 @@ class ARP:
         packet = eth_hdr + arp_hdr
 
         self.sock.send(packet)
+
+
+"""EXERCISE 2"""
+import threading
+import time
+
+from solutions import ARP
+from helper import ICMP
+
+
+class MyThread(threading.Thread):
+    def __init__(self, freq, **kwargs):
+        self.keep_running = True
+        self.exit_thread = False
+        self.freq = freq
+        threading.Thread.__init__(self, **kwargs)
+
+    def run(self):
+        print("Thread start")
+        while not self.exit_thread:
+            while self.keep_running:
+                self._target(*self._args)
+                time.sleep(int(self.freq) / 1000)
+
+
+def __main__():
+    arp = ARP("wlp6s0")
+    icmp = ICMP("192.168.0.1", 0)
+
+    t1 = MyThread(1000, target=arp.send_data, args=(["192.168.0.55"]))
+    t2 = MyThread(1000, target=icmp.send_data, args=([""]))
+
+    t1.start()
+    t2.start()
+
+    print("waiting")
+
+    input()
+
+    print("waited")
+
+    t1.keep_running = False
+    t1.exit_thread = True
+    t2.keep_running = False
+    t2.exit_thread = True
+
+    t1.join()
+    t2.join()
+
+
+if __name__ == "__main__":
+    __main__()
