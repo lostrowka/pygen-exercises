@@ -1,3 +1,20 @@
+"""
+
+
+    ************** BEFORE YOU USE THIS FILE **************
+
+    *************** PLEASE, PLEASE ASK ME ****************
+
+    **************** HAVE SOME CHALLENGE *****************
+
+    This file is meant to check the solution
+    The ones below are plobably not the best tho
+
+
+"""
+
+
+
 """EXERCISE 1"""
 import socket
 import struct
