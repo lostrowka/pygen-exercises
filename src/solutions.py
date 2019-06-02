@@ -92,3 +92,70 @@ def __main__():
 
 if __name__ == "__main__":
     __main__()
+
+
+"""EXERCISE 3"""
+
+import sys
+
+from PySide2.QtCore import QCoreApplication, Qt
+from PySide2.QtWidgets import QApplication, QMainWindow
+from PySide2 import QtCore
+
+from ex3_ui import Ui_Exercise
+from solutions import MyThread, ARP
+
+
+class ExerciseMainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        self.ui = Ui_Exercise()
+        self.ui.setupUi(self)
+
+        self.pb = self.ui.pushButton
+        self.arp = ARP("wlp6s0")
+        self.thread = MyThread(1000, target=self.arp.send_data, args=(["192.168.0.55"]))
+        self.thread.start()
+
+        QtCore.QObject.connect(self.pb, QtCore.SIGNAL('clicked()'), self.start_stop_thread)
+
+    def start_stop_thread(self):
+        self.thread.keep_running = not self.thread.keep_running
+
+
+def __main__():
+    app = QApplication(sys.argv)
+    QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
+    gui = ExerciseMainWindow()
+    gui.show()
+
+    app.exec_()
+
+
+if __name__ == "__main__":
+    __main__()
+
+# UI
+
+from PySide2 import QtCore, QtWidgets
+
+
+class Ui_Exercise(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("Exercise 3")
+        MainWindow.resize(240, 120)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton.setGeometry(QtCore.QRect(80, 50, 80, 25))
+        self.pushButton.setObjectName("pushButton")
+        MainWindow.setCentralWidget(self.centralwidget)
+
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def retranslateUi(self, MainWindow):
+        MainWindow.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "MainWindow", None, -1))
+        self.pushButton.setText(QtWidgets.QApplication.translate("MainWindow", "PushButton", None, -1))
+
